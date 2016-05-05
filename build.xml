@@ -8,35 +8,23 @@
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.8"/>
     <property name="source" value="1.8"/>
+    <!-- Applet building dependencies -->
+    <property name="JC222" value="ext/java_card_kit-2_2_2"/>
+    <property name="JC212" value="ext/java_card_kit-2_1_2"/>
+    <property name="JC303" value="ext/java_card_kit-3_0_3"/>
+    <property name="OP20" value="ext/visa_openplatform-2_0"/>
+    <property name="GP211" value="ext/globalplatform-2_1_1"/>
+    <!-- ant-javacard task from javacard.pro -->
+    <taskdef name="javacard" classpath="ext/ant-javacard.jar" classname="pro.javacard.ant.JavaCard"/>
     <path id="jpass-applet.classpath">
-        <pathelement location="bin"/>
         <pathelement location="lib/jcardsim-2.2.2-all.jar"/>
     </path>
-    <target name="init">
-        <mkdir dir="bin"/>
-        <copy includeemptydirs="false" todir="bin">
-            <fileset dir="src">
-                <exclude name="**/*.java"/>
-            </fileset>
-        </copy>
-    </target>
-    <target name="clean">
-        <delete dir="bin"/>
-    </target>
-    <target depends="clean" name="cleanall"/>
-    <target depends="build-subprojects,build-project" name="build"/>
-    <target name="build-subprojects"/>
-    <target depends="init" name="build-project">
-        <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
-            <src path="src"/>
-            <classpath refid="jpass-applet.classpath"/>
-        </javac>
-    </target>
-    <target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects"/>
-    <target name="SimpleAPDU">
-        <java classname="simpleapdu.SimpleAPDU" failonerror="true" fork="yes">
-            <classpath refid="jpass-applet.classpath"/>
-        </java>
+    <target name="applet">
+        <javacard jckit="${JC222}">
+            <cap aid="4C6162616B" sources="src/applets" output="applet.cap">
+              <applet aid="4C6162616B4170706C6574" class="applets.JpassApplet"/>
+	      <import exps="${GP211}" jar="${GP211}/gp211.jar"/>
+            </cap>
+        </javacard>
     </target>
 </project>
